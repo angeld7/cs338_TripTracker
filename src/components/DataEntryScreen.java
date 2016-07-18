@@ -94,8 +94,12 @@ public class DataEntryScreen extends JPanel {
                 saveCurrentSegment();
             }
         });
+        saveButton.setEnabled(false);
 
         deleteButton = new JButton("Delete");
+        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setBackground(Color.RED);
+        deleteButton.setEnabled(false);
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,6 +161,8 @@ public class DataEntryScreen extends JPanel {
         deleting = true;
         tripSegmentJList.clearSelection();
         listModel.removeElement(currentTripSegmentForm.getTripSegment());
+        deleteButton.setEnabled(false);
+        saveButton.setEnabled(false);
         remove(currentTripSegmentForm);
         refresh();
         deleting = false;

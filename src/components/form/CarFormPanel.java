@@ -1,9 +1,11 @@
 package components.form;
 
+import components.utility.FormUtility;
 import data.CarSegment;
 import data.TrainSegment;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 /**
@@ -20,10 +22,42 @@ public class CarFormPanel extends FormPanel<CarSegment> {
     private JTextField city;
     private JTextField location;
     private JTextField price;
-    private JTextField confirmation;
+    private JTextField confirmationNumber;
 
     private CarFormPanel() {
-        add(new JLabel("I am a car!!"));
+        super();
+        setLayout(new GridBagLayout());
+        initAndAddFields();
+    }
+
+    public void initAndAddFields() {
+        date = new JTextField();
+        pickupTime = new JTextField();
+        company = new JTextField();
+        city = new JTextField();
+        location = new JTextField();
+        price = new JTextField();
+        confirmationNumber = new JTextField();
+
+        FormUtility.addLabel("Company:", this);
+        FormUtility.addWidthScaledField(company, this, 6);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("Confirmation #:", this);
+        FormUtility.addWidthScaledField(confirmationNumber, this, 5);
+        FormUtility.addLabel("Price:", this);
+        FormUtility.addSetWidthField(price, this, 50);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("City:", this);
+        FormUtility.addWidthScaledField(city, this, 5);
+        FormUtility.addLabel("Location:", this);
+        FormUtility.addSetWidthField(location, this, 50);
+        FormUtility.addBlankLastField(this);
     }
 
     public static CarFormPanel get() {

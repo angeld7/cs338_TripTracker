@@ -1,9 +1,10 @@
 package components.form;
 
+import components.utility.FormUtility;
 import data.FlightSegment;
-import data.TrainSegment;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 /**
@@ -16,7 +17,7 @@ public class FlightFormPanel extends FormPanel<FlightSegment> {
 
     private JTextField date;
     private JTextField time;
-    private JTextField airline;
+    private JComboBox airline;
     private JTextField number;
     private JTextField departureCity;
     private JTextField arrivalCity;
@@ -25,7 +26,55 @@ public class FlightFormPanel extends FormPanel<FlightSegment> {
     private JTextField confirmationNumber;
 
     private FlightFormPanel() {
-        add(new JLabel("I am a flight!!"));
+        super();
+        setLayout(new GridBagLayout());
+        initAndAddFields();
+    }
+
+    public void initAndAddFields() {
+        date = new JTextField();
+        time = new JTextField();
+        airline = new JComboBox();
+        number = new JTextField();
+        departureCity = new JTextField();
+        arrivalCity = new JTextField();
+        arrivalTime = new JTextField();
+        price = new JTextField();
+        confirmationNumber = new JTextField();
+
+        FormUtility.addLabel("Airline:", this);
+        FormUtility.addWidthScaledField(airline, this, 5);
+        FormUtility.addLabel("Flight Number:", this);
+        FormUtility.addWidthScaledField(number, this, 1);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("Confirmation #:", this);
+        FormUtility.addWidthScaledField(confirmationNumber, this, 5);
+        FormUtility.addLabel("Price:", this);
+        FormUtility.addSetWidthField(price, this, 50);
+        FormUtility.addBlankLastField(this);
+
+
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("Departure City:", this);
+        FormUtility.addWidthScaledField(departureCity, this, 5);
+        FormUtility.addLabel("Departure Date:", this);
+        FormUtility.addSetWidthField(date, this, 50);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addWidthScaledField(new JPanel(), this, 6);
+        FormUtility.addLabel("Departure Time:", this);
+        FormUtility.addSetWidthField(time, this, 50);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("Arrival City:", this);
+        FormUtility.addWidthScaledField(arrivalCity, this, 5);
+        FormUtility.addLabel("Arrival Time:", this);
+        FormUtility.addSetWidthField(arrivalTime, this, 50);
+        FormUtility.addBlankLastField(this);
     }
 
     public static FlightFormPanel get() {
@@ -52,7 +101,7 @@ public class FlightFormPanel extends FormPanel<FlightSegment> {
 
     @Override
     public FlightSegment flushChanges() {
-        if(tripSegment == null) {
+        if (tripSegment == null) {
             tripSegment = new FlightSegment();
         }
         return tripSegment;

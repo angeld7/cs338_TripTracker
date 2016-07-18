@@ -1,8 +1,10 @@
 package components.form;
 
+import components.utility.FormUtility;
 import data.TrainSegment;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by Angel on 7/16/2016.
@@ -20,9 +22,11 @@ public class TrainFormPanel extends FormPanel<TrainSegment> {
     private JTextField arrivalCity;
     private JTextField arrivalTime;
     private JTextField price;
-    private JTextField confirmation;
+    private JTextField confirmationNumber;
 
     private TrainFormPanel() {
+        super();
+        setLayout(new GridBagLayout());
         initAndAddFields();
     }
 
@@ -35,16 +39,41 @@ public class TrainFormPanel extends FormPanel<TrainSegment> {
         arrivalCity = new JTextField();
         arrivalTime = new JTextField();
         price = new JTextField();
-        confirmation = new JTextField();
-        add(date);
-        add(time);
-        add(company);
-        add(number);
-        add(departureCity);
-        add(arrivalCity);
-        add(arrivalTime);
-        add(price);
-        add(confirmation);
+        confirmationNumber = new JTextField();
+
+
+        FormUtility.addLabel("Company:", this);
+        FormUtility.addWidthScaledField(company, this, 5);
+        FormUtility.addLabel("Train Number:", this);
+        FormUtility.addWidthScaledField(number, this, 1);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("Confirmation #:", this);
+        FormUtility.addWidthScaledField(confirmationNumber, this, 5);
+        FormUtility.addLabel("Price:", this);
+        FormUtility.addSetWidthField(price, this, 50);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("Departure City:", this);
+        FormUtility.addWidthScaledField(departureCity, this, 5);
+        FormUtility.addLabel("Departure Date:", this);
+        FormUtility.addSetWidthField(date, this, 50);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addWidthScaledField(new JPanel(), this, 6);
+        FormUtility.addLabel("Departure Time:", this);
+        FormUtility.addSetWidthField(time, this, 50);
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addBlankLastField(this);
+
+        FormUtility.addLabel("Arrival City:", this);
+        FormUtility.addWidthScaledField(arrivalCity, this, 5);
+        FormUtility.addLabel("Arrival Time:", this);
+        FormUtility.addSetWidthField(arrivalTime, this, 50);
+        FormUtility.addBlankLastField(this);
     }
 
     public static TrainFormPanel get() {
@@ -71,7 +100,7 @@ public class TrainFormPanel extends FormPanel<TrainSegment> {
 
     @Override
     public TrainSegment flushChanges() {
-        if(tripSegment == null) {
+        if (tripSegment == null) {
             tripSegment = new TrainSegment();
         }
         return tripSegment;
