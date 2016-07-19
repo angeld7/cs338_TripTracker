@@ -72,7 +72,7 @@ public class FlightSegment extends TripSegment {
                 arrivalCity == null ? "" : arrivalCity,
                 arrivalTime == null ? "" : arrivalTime,
                 price,
-                confirmationNumber == null ? "" : ", " + confirmationNumber
+                confirmationNumber == null || confirmationNumber.trim().equals("") ? "" : ", " + confirmationNumber
         );
     }
 

@@ -53,7 +53,7 @@ public class CarSegment extends TripSegment {
                 city == null ? "" : city,
                 location == null ? "" : location,
                 price,
-                confirmationNumber == null ? "" : ", " + confirmationNumber
+                confirmationNumber == null || confirmationNumber.trim().equals("") ? "" : ", " + confirmationNumber
         );
     }
 
