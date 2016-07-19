@@ -8,8 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Date;
 
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
+
 /**
- * Created by Angel on 7/16/2016.
+ * This is the form used to edit Train trip segments
  */
 public class TrainFormPanel extends FormPanel<TrainSegment> {
     public static final String COMPANY = "Company";
@@ -21,8 +27,7 @@ public class TrainFormPanel extends FormPanel<TrainSegment> {
     public static final String DEPARTURE_TIME = "Departure Time";
     public static final String ARRIVAL_CITY = "Arrival City";
     public static final String ARRIVAL_TIME = "Arrival Time";
-    //date, time, company, trainNumber, departure city, arrival city, arrival time, price (optional), confirmation # (optional)
-    //e.g.: 6/1/05, 7:45, Amtrak, 128, Philadelphia, Washington, 9:20
+
     private JFormattedTextField date;
     private JFormattedTextField time;
     private JComboBox company;

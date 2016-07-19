@@ -1,9 +1,5 @@
 package data;
 
-import java.util.Date;
-import java.util.Formatter;
-import java.util.Locale;
-
 /*
  * Angel Delgado
  * ald363@drexel.edu
@@ -46,6 +42,7 @@ public class CarSegment extends TripSegment {
     /**
      * toString() is customized to print out the string specified in the requirements.
      * e.g.: 7/12/05, 10:20, Hertz, Philadelphia, airport, $23.95
+     *
      * @return string form of this class
      */
     @Override

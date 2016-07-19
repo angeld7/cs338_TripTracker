@@ -7,9 +7,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
 
 /**
- * Created by Angel on 7/16/2016.
+ * This screen is used to pick the type of segment to add
+ *
  */
 public class TripSegmentTypePicker extends JPanel {
     private static final String LABEL_TEXT = "Please select the type of trip segment to add:";
@@ -32,6 +38,9 @@ public class TripSegmentTypePicker extends JPanel {
 
     }
 
+    /**
+     * This method loops through all of the trip segment types and adds a button for each.
+     */
     private void addButtons() {
         for (final TripSegmentType tripSegmentType : TripSegmentType.values()) {
             JButton button = new JButton(tripSegmentType.name());
@@ -42,6 +51,7 @@ public class TripSegmentTypePicker extends JPanel {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    //This sends the signal to start editing a new segment of this type
                     dataEntryScreen.editNewTripSegment(tripSegmentType);
                 }
             });

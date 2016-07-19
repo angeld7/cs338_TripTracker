@@ -13,10 +13,20 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
+
+
 /**
- * Created by Angel on 7/16/2016.
+ * This class defines most of the applications behavior.  I use the term presenter to refer to its job.
  */
 public class DataEntryScreen extends JPanel implements FormPresenter {
+    /**
+     * The form panel factory is used to retrieve the correct form for the trip segment we are working with
+     */
     private FormPanelFactory formPanelFactory;
 
     private JPanel centerPanel;
@@ -31,19 +41,30 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
     private JLabel segmentLabel;
     private JLabel segmentTitle;
 
+    /**
+     * True if we are in the process of deleting the trip segment
+     */
     private boolean deleting = false;
+
+    /**
+     * True if there are any unsaved changes
+     */
     private boolean unsavedChanges = false;
 
     public DataEntryScreen() {
         super(new BorderLayout());
         formPanelFactory = new FormPanelFactory(this);
+
         setupNewTripSegmentScreen();
 
+        //The left panel contains the list of saved segments
         JPanel leftPanel = new JPanel();
         setupLeftPanel(leftPanel);
 
+        //The center panel contains the title and the form being displayed
         setupCenterPanel();
 
+        //The bottom panel contains the new button, error label, save, and delete buttons
         JPanel bottomPanel = new JPanel();
         setupBottomPanel(bottomPanel);
 
@@ -52,12 +73,16 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Sets up the trip segment JList that displays all saved trip segments
+     * @param leftPanel
+     */
     private void setupLeftPanel(JPanel leftPanel) {
         leftPanel.setLayout(new BorderLayout());
         leftPanel.setPreferredSize(new Dimension(200, 100));
         listModel = new DefaultListModel<>();
         tripSegmentJList = new JList<>(listModel);
-        tripSegmentJList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tripSegmentJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tripSegmentJList.setLayoutOrientation(JList.VERTICAL);
         tripSegmentJList.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -76,6 +101,9 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
     }
 
 
+    /**
+     * The center panel contains a title bar and a place for the forms to be displayed
+     */
     private void setupCenterPanel() {
         segmentTitle = new JLabel();
         segmentLabel = new JLabel();
@@ -95,6 +123,9 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         centerPanel.add(titlePanel, BorderLayout.NORTH);
     }
 
+    /**
+     * Creates the new segment selection screen
+     */
     private void setupNewTripSegmentScreen() {
         tripSegmentTypePicker = new TripSegmentTypePicker(this);
         tripSegmentTypePicker.setAlignmentX(CENTER_ALIGNMENT);
@@ -103,6 +134,9 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
 
     }
 
+    /**
+     * Displays the new segment selection screen
+     */
     private void displayNewTripSegmentScreen() {
         if (isItOkToProceed()) {
             resetState();
@@ -113,6 +147,10 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         }
     }
 
+    /**
+     * Displays the new button, error label, save, and delete buttons.
+     * @param bottomPanel
+     */
     private void setupBottomPanel(JPanel bottomPanel) {
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 
@@ -143,6 +181,7 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Delete confirmation
                 if (JOptionPane.showConfirmDialog(DataEntryScreen.this, "Do you want to delete the current trip segment?", "Confirm", JOptionPane.YES_NO_OPTION) == 0) {
                     deleteCurrentTripSegment();
                 }
@@ -156,6 +195,10 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         bottomPanel.add(deleteButton);
     }
 
+    /**
+     * This will open a blank form for the trip segment type specified
+     * @param tripSegmentType
+     */
     @Override
     public void editNewTripSegment(TripSegmentType tripSegmentType) {
         if (isItOkToProceed()) {
@@ -172,10 +215,18 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         }
     }
 
+    /**
+     * Sets the title for the center of the screen
+     * @param tripSegmentType
+     */
     public void setTitle(TripSegmentType tripSegmentType) {
         segmentTitle.setText(tripSegmentType + " Trip Segment");
     }
 
+    /**
+     * Loads up the screen for the specified trip segment and loads the data onto it.
+     * @param segment
+     */
     public void setTripSegment(TripSegment segment) {
         if (isItOkToProceed()) {
             resetState();
@@ -189,22 +240,37 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         }
     }
 
+    /**
+     * Called whenever the data changes in one of the forms.
+     * @param tripSegment
+     */
     @Override
     public void dataUpdated(TripSegment tripSegment) {
         unsavedChanges = true;
         segmentLabel.setText(tripSegment.toString());
     }
 
+    /**
+     * Called when a field fails validation
+     * @param message
+     */
     @Override
     public void inputValidationFailed(String message) {
         errorLabel.setText(message);
     }
 
+    /**
+     * Clears the error label text
+     */
     @Override
     public void clearValidationErrors() {
         errorLabel.setText("");
     }
 
+    /**
+     * Changes the center panel to the specified panel
+     * @param panel
+     */
     private void changeCenterPanel(JPanel panel) {
         centerPanel.remove(currentlyDisplayedPanel);
         currentlyDisplayedPanel = panel;
@@ -212,6 +278,10 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         refresh();
     }
 
+    /**
+     * Saves the current trip segment
+     * @return
+     */
     public boolean saveCurrentSegment() {
         if(!currentTripSegmentForm.hasErrors()) {
             TripSegment tripSegment = currentTripSegmentForm.flushChanges();
@@ -227,6 +297,10 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         }
     }
 
+    /**
+     * Called to check if there are any unsaved changes.  If there are the user will be prompt to save them.
+     * @return
+     */
     public boolean isItOkToProceed() {
         boolean isItOK = true;
         if (currentTripSegmentForm != null && unsavedChanges) {
@@ -240,6 +314,9 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         return isItOK;
     }
 
+    /**
+     * Deletes the trip segment
+     */
     public void deleteCurrentTripSegment() {
         deleting = true;
         tripSegmentJList.clearSelection();
@@ -252,16 +329,25 @@ public class DataEntryScreen extends JPanel implements FormPresenter {
         deleting = false;
     }
 
+    /**
+     * Clears the title on the screen
+     */
     private void clearTitle() {
         segmentLabel.setText("");
         segmentTitle.setText("");
     }
 
+    /**
+     * Clears the error label and sets the internal state to no changes have been made.
+     */
     public void resetState() {
         unsavedChanges = false;
         errorLabel.setText("");
     }
 
+    /**
+     * Repaints the screen.
+     */
     public void refresh() {
         revalidate();
         repaint();

@@ -11,7 +11,6 @@ package data;
  * This is the data structure for the train segment
  */
 public class TrainSegment extends TripSegment {
-    //date, time, company, number, departure city, arrival city, arrival time, price (optional), confirmation # (optional)
     private String company;
     private String trainNumber;
     private String departureCity;

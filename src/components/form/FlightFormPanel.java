@@ -8,8 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 
 
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
+
 /**
- * Created by Angel on 7/16/2016.
+ * This is the form used to edit Flight trip segments
  */
 public class FlightFormPanel extends FormPanel<FlightSegment> {
     public static final String FLIGHT_NUMBER = "Flight Number";

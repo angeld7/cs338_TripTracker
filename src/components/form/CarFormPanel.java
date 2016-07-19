@@ -12,8 +12,14 @@ import java.awt.event.KeyListener;
 import java.util.Date;
 
 
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
+
 /**
- * Created by Angel on 7/16/2016.
+ * This is the form used to edit Car trip segments
  */
 public class CarFormPanel extends FormPanel<CarSegment> {
     public static final String DATE = "Date";
@@ -59,7 +65,6 @@ public class CarFormPanel extends FormPanel<CarSegment> {
 
         FormUtility.addRequiredValidator(city, defaultInputValidationFailHandler, CITY);
         FormUtility.addRequiredValidator(location, defaultInputValidationFailHandler, LOCATION);
-        FormUtility.addRequiredValidator(confirmationNumber, defaultInputValidationFailHandler, CONFIRMATION_NUMBER);
 
         fields.add(company);
         fields.add(confirmationNumber);

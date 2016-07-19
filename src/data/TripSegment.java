@@ -3,8 +3,14 @@ package data;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
+
 /**
- * Created by Angel on 7/16/2016.
+ * This is the base class for all of the segments it contains data relevant to all segments
  */
 public abstract class TripSegment {
     Date date;

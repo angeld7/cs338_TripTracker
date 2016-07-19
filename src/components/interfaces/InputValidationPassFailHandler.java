@@ -2,8 +2,14 @@ package components.interfaces;
 
 import javax.swing.*;
 
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
+
 /**
- * Created by Angel on 7/19/2016.
+ * This interface is used to allow the presenter handle validation
  */
 public interface InputValidationPassFailHandler {
     void fail(String message, JComponent component);

@@ -10,17 +10,34 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
+
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
 
 /**
- * Created by Angel on 7/16/2016.
+ * This is the base form that all forms extend from
  */
 public abstract class FormPanel<T extends TripSegment> extends JPanel {
+    /**
+     * Specifies the fields that ar currently failing validation
+     */
     private Set<JComponent> erroredComponents = new HashSet<>();
+    /**
+     * All fields on the form
+     */
     protected List<JComponent> fields = new LinkedList<>();
     protected T tripSegment;
     protected FormPresenter presenter;
+    /**
+     * Used to detect when a form is edited
+     */
     protected KeyListener keyListener;
+    /**
+     * Handler for validation checks
+     */
     protected InputValidationPassFailHandler defaultInputValidationFailHandler;
 
     public abstract void clearFields();
@@ -53,6 +70,9 @@ public abstract class FormPanel<T extends TripSegment> extends JPanel {
         };
     }
 
+    /**
+     * Clears the tripSegment and resets all of the components
+     */
     public void clear() {
         tripSegment = null;
         erroredComponents.clear();
@@ -67,14 +87,25 @@ public abstract class FormPanel<T extends TripSegment> extends JPanel {
         populateTripSegmentData();
     }
 
+    /**
+     * Populates all of the fields with the data in the trip segment
+     */
     protected abstract void populateTripSegmentData();
 
+    /**
+     * Saves all of the data in the fields to the trip segment object
+     * @return
+     */
     public abstract T flushChanges();
 
     public T getTripSegment() {
         return tripSegment;
     }
 
+    /**
+     * Validates all fields
+     * @return
+     */
     public boolean hasErrors() {
         boolean error = false;
         synchronized (erroredComponents) {

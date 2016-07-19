@@ -1,9 +1,13 @@
 package data;
 
-import java.util.Date;
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
 
 /**
- * Created by Angel on 7/16/2016.
+ * This is the data structure for the flight segment
  */
 public class FlightSegment extends TripSegment {
     //date, time, airline, flightNumber, departure city, arrival city, arrival time, price (optional), confirmation # (optional)
