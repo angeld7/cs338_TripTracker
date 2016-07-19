@@ -2,6 +2,7 @@ package components;
 
 import components.form.FormPanel;
 import components.form.FormPanelFactory;
+import components.interfaces.FormPresenter;
 import data.TripSegment;
 import data.TripSegmentType;
 
@@ -15,29 +16,38 @@ import java.awt.event.ActionListener;
 /**
  * Created by Angel on 7/16/2016.
  */
-public class DataEntryScreen extends JPanel {
+public class DataEntryScreen extends JPanel implements FormPresenter {
+    private FormPanelFactory formPanelFactory;
+
+    private JPanel centerPanel;
     private JPanel currentlyDisplayedPanel;
-    private JSplitPane splitPane;
+    private JLabel errorLabel;
     private TripSegmentTypePicker tripSegmentTypePicker;
     private JList<TripSegment> tripSegmentJList;
     private DefaultListModel<TripSegment> listModel;
     private FormPanel currentTripSegmentForm;
     private JButton saveButton;
     private JButton deleteButton;
+    private JLabel segmentLabel;
+    private JLabel segmentTitle;
 
     private boolean deleting = false;
+    private boolean unsavedChanges = false;
 
     public DataEntryScreen() {
         super(new BorderLayout());
+        formPanelFactory = new FormPanelFactory(this);
+        setupNewTripSegmentScreen();
 
         JPanel leftPanel = new JPanel();
         setupLeftPanel(leftPanel);
 
-        setupNewTripSegmentScreen();
+        setupCenterPanel();
 
         JPanel bottomPanel = new JPanel();
         setupBottomPanel(bottomPanel);
 
+        add(centerPanel, BorderLayout.CENTER);
         add(leftPanel, BorderLayout.WEST);
         add(bottomPanel, BorderLayout.SOUTH);
     }
@@ -52,14 +62,37 @@ public class DataEntryScreen extends JPanel {
         tripSegmentJList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(!deleting) {
+                if (!deleting) {
                     setTripSegment(tripSegmentJList.getSelectedValue());
                 }
             }
         });
 
-        leftPanel.add(new JLabel("Trip Segments"), BorderLayout.NORTH);
+        JLabel tripSegmentsLabel = new JLabel("Trip Segments");
+        tripSegmentsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        leftPanel.add(tripSegmentsLabel, BorderLayout.NORTH);
         leftPanel.add(tripSegmentJList, BorderLayout.CENTER);
+    }
+
+
+    private void setupCenterPanel() {
+        segmentTitle = new JLabel();
+        segmentLabel = new JLabel();
+        centerPanel = new JPanel(new BorderLayout());
+
+        segmentTitle.setAlignmentX(CENTER_ALIGNMENT);
+        segmentLabel.setAlignmentX(CENTER_ALIGNMENT);
+        segmentTitle.setFont(new Font("Sans-Serif", Font.BOLD, 18));
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+
+        titlePanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        titlePanel.add(segmentTitle);
+        titlePanel.add(segmentLabel);
+
+        centerPanel.add(titlePanel, BorderLayout.NORTH);
     }
 
     private void setupNewTripSegmentScreen() {
@@ -71,9 +104,13 @@ public class DataEntryScreen extends JPanel {
     }
 
     private void displayNewTripSegmentScreen() {
-        saveButton.setEnabled(false);
-        deleteButton.setEnabled(false);
-        changeCenterPanel(tripSegmentTypePicker);
+        if (isItOkToProceed()) {
+            resetState();
+            saveButton.setEnabled(false);
+            deleteButton.setEnabled(false);
+            clearTitle();
+            changeCenterPanel(tripSegmentTypePicker);
+        }
     }
 
     private void setupBottomPanel(JPanel bottomPanel) {
@@ -86,6 +123,9 @@ public class DataEntryScreen extends JPanel {
                 displayNewTripSegmentScreen();
             }
         });
+
+        errorLabel = new JLabel();
+        errorLabel.setForeground(Color.RED);
 
         saveButton = new JButton(("Save"));
         saveButton.addActionListener(new ActionListener() {
@@ -110,51 +150,94 @@ public class DataEntryScreen extends JPanel {
         });
         bottomPanel.add(newTripSegmentButton);
         bottomPanel.add(Box.createHorizontalGlue());
+        bottomPanel.add(errorLabel);
+        bottomPanel.add(Box.createHorizontalGlue());
         bottomPanel.add(saveButton);
         bottomPanel.add(deleteButton);
     }
 
+    @Override
     public void editNewTripSegment(TripSegmentType tripSegmentType) {
-        if (currentlyDisplayedPanel != null) {
-            remove(currentlyDisplayedPanel);
+        if (isItOkToProceed()) {
+            resetState();
+            if (currentlyDisplayedPanel != null) {
+                remove(currentlyDisplayedPanel);
+            }
+            currentTripSegmentForm = formPanelFactory.getForm(tripSegmentType);
+            currentTripSegmentForm.clear();
+            deleteButton.setEnabled(false);
+            saveButton.setEnabled(true);
+            setTitle(tripSegmentType);
+            changeCenterPanel(currentTripSegmentForm);
         }
-        currentTripSegmentForm = FormPanelFactory.getForm(tripSegmentType);
-        currentTripSegmentForm.clear();
-        deleteButton.setEnabled(false);
-        saveButton.setEnabled(true);
-        changeCenterPanel(currentTripSegmentForm);
     }
 
-    private void changeCenterPanel(JPanel panel) {
-        if (currentTripSegmentForm != null && currentTripSegmentForm.hasUnsavedChanges()) {
-            int choice = JOptionPane.showConfirmDialog(this, "Unsaved changes detected.  Would you like to save your changes?", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
-            if (choice == 0) {
-                saveCurrentSegment();
-            } else if (choice == 2) {
-                return;
-            }
-        }
-        remove(currentlyDisplayedPanel);
-        currentlyDisplayedPanel = panel;
-        add(currentlyDisplayedPanel, BorderLayout.CENTER);
-        refresh();
+    public void setTitle(TripSegmentType tripSegmentType) {
+        segmentTitle.setText(tripSegmentType + " Trip Segment");
     }
 
     public void setTripSegment(TripSegment segment) {
-        currentTripSegmentForm = FormPanelFactory.getForm(segment.getTripSegmentType());
-        currentTripSegmentForm.setTripSegment(segment);
-        deleteButton.setEnabled(true);
-        saveButton.setEnabled(true);
-        changeCenterPanel(currentTripSegmentForm);
+        if (isItOkToProceed()) {
+            resetState();
+            currentTripSegmentForm = formPanelFactory.getForm(segment.getTripSegmentType());
+            currentTripSegmentForm.setTripSegment(segment);
+            segmentLabel.setText(segment.toString());
+            deleteButton.setEnabled(true);
+            saveButton.setEnabled(true);
+            setTitle(segment.getTripSegmentType());
+            changeCenterPanel(currentTripSegmentForm);
+        }
     }
 
-    public void saveCurrentSegment() {
-        TripSegment tripSegment = currentTripSegmentForm.flushChanges();
-        if (!listModel.contains(tripSegment)) {
-            listModel.addElement(tripSegment);
-        }
-        setTripSegment(tripSegment);
+    @Override
+    public void dataUpdated(TripSegment tripSegment) {
+        unsavedChanges = true;
+        segmentLabel.setText(tripSegment.toString());
+    }
+
+    @Override
+    public void inputValidationFailed(String message) {
+        errorLabel.setText(message);
+    }
+
+    @Override
+    public void clearValidationErrors() {
+        errorLabel.setText("");
+    }
+
+    private void changeCenterPanel(JPanel panel) {
+        centerPanel.remove(currentlyDisplayedPanel);
+        currentlyDisplayedPanel = panel;
+        centerPanel.add(currentlyDisplayedPanel, BorderLayout.CENTER);
         refresh();
+    }
+
+    public boolean saveCurrentSegment() {
+        if(!currentTripSegmentForm.hasErrors()) {
+            TripSegment tripSegment = currentTripSegmentForm.flushChanges();
+            if (!listModel.contains(tripSegment)) {
+                listModel.addElement(tripSegment);
+            }
+            resetState();
+            setTripSegment(tripSegment);
+            refresh();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isItOkToProceed() {
+        boolean isItOK = true;
+        if (currentTripSegmentForm != null && unsavedChanges) {
+            int choice = JOptionPane.showConfirmDialog(this, "Unsaved changes detected.  Would you like to save your changes?", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (choice == 2) {
+                isItOK = false;
+            } else if (choice == 0) {
+                isItOK = saveCurrentSegment();
+            }
+        }
+        return isItOK;
     }
 
     public void deleteCurrentTripSegment() {
@@ -163,9 +246,20 @@ public class DataEntryScreen extends JPanel {
         listModel.removeElement(currentTripSegmentForm.getTripSegment());
         deleteButton.setEnabled(false);
         saveButton.setEnabled(false);
-        remove(currentTripSegmentForm);
+        centerPanel.remove(currentTripSegmentForm);
+        resetState();
         refresh();
         deleting = false;
+    }
+
+    private void clearTitle() {
+        segmentLabel.setText("");
+        segmentTitle.setText("");
+    }
+
+    public void resetState() {
+        unsavedChanges = false;
+        errorLabel.setText("");
     }
 
     public void refresh() {

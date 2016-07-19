@@ -1,7 +1,13 @@
 package data;
 
+/*
+ * Angel Delgado
+ * ald363@drexel.edu
+ * CS338:GUI, Assignment 2, Trip Tracker
+ */
+
 /**
- * Created by Angel on 7/16/2016.
+ * This Enum is used to identify all of the types of trip segments we can have.
  */
 public enum TripSegmentType {
     FLIGHT("Flight"), TRAIN("Train"), CAR("Car");
@@ -10,5 +16,10 @@ public enum TripSegmentType {
 
     TripSegmentType(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -1,5 +1,6 @@
 package data;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -32,6 +33,10 @@ public abstract class TripSegment {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public String getDateString() {
+        return date == null ? "" : new SimpleDateFormat("M/dd/yy, hh:mm a, ").format(date);
     }
 
     public abstract TripSegmentType getTripSegmentType();

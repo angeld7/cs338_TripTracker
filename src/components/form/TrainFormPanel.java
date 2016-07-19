@@ -1,101 +1,142 @@
 package components.form;
 
+import components.interfaces.FormPresenter;
 import components.utility.FormUtility;
 import data.TrainSegment;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 
 /**
  * Created by Angel on 7/16/2016.
  */
 public class TrainFormPanel extends FormPanel<TrainSegment> {
-    //date, time, company, number, departure city, arrival city, arrival time, price (optional), confirmation # (optional)
+    public static final String COMPANY = "Company";
+    public static final String TRAIN_NUMBER = "Train Number";
+    public static final String CONFIRMATION = "Confirmation #";
+    public static final String PRICE = "Price";
+    public static final String DEPARTURE_CITY = "Departure City";
+    public static final String DEPARTURE_DATE = "Departure Date";
+    public static final String DEPARTURE_TIME = "Departure Time";
+    public static final String ARRIVAL_CITY = "Arrival City";
+    public static final String ARRIVAL_TIME = "Arrival Time";
+    //date, time, company, trainNumber, departure city, arrival city, arrival time, price (optional), confirmation # (optional)
     //e.g.: 6/1/05, 7:45, Amtrak, 128, Philadelphia, Washington, 9:20
-    private static TrainFormPanel trainFormPanel = null;
-
-    private JTextField date;
-    private JTextField time;
-    private JTextField company;
-    private JTextField number;
+    private JFormattedTextField date;
+    private JFormattedTextField time;
+    private JComboBox company;
+    private JTextField trainNumber;
     private JTextField departureCity;
     private JTextField arrivalCity;
     private JTextField arrivalTime;
-    private JTextField price;
+    private JFormattedTextField price;
     private JTextField confirmationNumber;
 
-    private TrainFormPanel() {
-        super();
+    public TrainFormPanel(FormPresenter presenter) {
+        super(presenter);
         setLayout(new GridBagLayout());
-        initAndAddFields();
+        initFields();
+        addFields();
     }
 
-    public void initAndAddFields() {
-        date = new JTextField();
-        time = new JTextField();
-        company = new JTextField();
-        number = new JTextField();
+    private void initFields() {
+        date = FormUtility.getRequiredDateField(defaultInputValidationFailHandler, DEPARTURE_DATE);
+        time = FormUtility.getRequiredTimeField(defaultInputValidationFailHandler, DEPARTURE_TIME);
+        String[] companies = {"Amtrak", "Riverline", "NJ Transit", "Bob's fun trains"};
+        company = new JComboBox(companies);
+        trainNumber = new JTextField();
         departureCity = new JTextField();
         arrivalCity = new JTextField();
-        arrivalTime = new JTextField();
-        price = new JTextField();
+        arrivalTime = FormUtility.getRequiredTimeField(defaultInputValidationFailHandler, ARRIVAL_TIME);
+        price = FormUtility.getCurrencyField(defaultInputValidationFailHandler);
         confirmationNumber = new JTextField();
 
+        date.addKeyListener(keyListener);
+        time.addKeyListener(keyListener);
+        company.addKeyListener(keyListener);
+        trainNumber.addKeyListener(keyListener);
+        departureCity.addKeyListener(keyListener);
+        arrivalCity.addKeyListener(keyListener);
+        arrivalTime.addKeyListener(keyListener);
+        price.addKeyListener(keyListener);
+        confirmationNumber.addKeyListener(keyListener);
 
-        FormUtility.addLabel("Company:", this);
+        FormUtility.addRequiredValidator(trainNumber, defaultInputValidationFailHandler, TRAIN_NUMBER);
+        FormUtility.addRequiredValidator(arrivalCity, defaultInputValidationFailHandler, ARRIVAL_CITY);
+        FormUtility.addRequiredValidator(arrivalTime, defaultInputValidationFailHandler, ARRIVAL_TIME);
+        FormUtility.addRequiredValidator(departureCity, defaultInputValidationFailHandler, DEPARTURE_CITY);
+
+        fields.add(company);
+        fields.add(trainNumber);
+        fields.add(confirmationNumber);
+        fields.add(price);
+        fields.add(departureCity);
+        fields.add(date);
+        fields.add(time);
+        fields.add(arrivalCity);
+        fields.add(arrivalTime);
+    }
+
+    public void addFields() {
+        FormUtility.addRequiredLabel(COMPANY, this);
         FormUtility.addWidthScaledField(company, this, 5);
-        FormUtility.addLabel("Train Number:", this);
-        FormUtility.addWidthScaledField(number, this, 1);
+        FormUtility.addRequiredLabel(TRAIN_NUMBER, this);
+        FormUtility.addWidthScaledField(trainNumber, this, 1);
         FormUtility.addBlankLastField(this);
 
-        FormUtility.addLabel("Confirmation #:", this);
+        FormUtility.addLabel(CONFIRMATION, this);
         FormUtility.addWidthScaledField(confirmationNumber, this, 5);
-        FormUtility.addLabel("Price:", this);
+        FormUtility.addLabel(PRICE, this);
         FormUtility.addSetWidthField(price, this, 50);
         FormUtility.addBlankLastField(this);
 
         FormUtility.addBlankLastField(this);
 
-        FormUtility.addLabel("Departure City:", this);
+        FormUtility.addRequiredLabel(DEPARTURE_CITY, this);
         FormUtility.addWidthScaledField(departureCity, this, 5);
-        FormUtility.addLabel("Departure Date:", this);
+        FormUtility.addRequiredLabel(DEPARTURE_DATE, this);
         FormUtility.addSetWidthField(date, this, 50);
         FormUtility.addBlankLastField(this);
 
         FormUtility.addWidthScaledField(new JPanel(), this, 6);
-        FormUtility.addLabel("Departure Time:", this);
+        FormUtility.addRequiredLabel(DEPARTURE_TIME, this);
         FormUtility.addSetWidthField(time, this, 50);
         FormUtility.addBlankLastField(this);
 
         FormUtility.addBlankLastField(this);
 
-        FormUtility.addLabel("Arrival City:", this);
+        FormUtility.addRequiredLabel(ARRIVAL_CITY, this);
         FormUtility.addWidthScaledField(arrivalCity, this, 5);
-        FormUtility.addLabel("Arrival Time:", this);
+        FormUtility.addRequiredLabel(ARRIVAL_TIME, this);
         FormUtility.addSetWidthField(arrivalTime, this, 50);
         FormUtility.addBlankLastField(this);
     }
 
-    public static TrainFormPanel get() {
-        if (trainFormPanel == null) {
-            trainFormPanel = new TrainFormPanel();
-        }
-        return trainFormPanel;
-    }
-
     @Override
     public void clearFields() {
-
-    }
-
-    @Override
-    public void setTripSegment(TrainSegment segment) {
-
+        date.setText("");
+        time.setText("");
+        company.setSelectedIndex(0);
+        trainNumber.setText("");
+        departureCity.setText("");
+        arrivalCity.setText("");
+        arrivalTime.setText("");
+        price.setText("");
+        confirmationNumber.setText("");
     }
 
     @Override
     protected void populateTripSegmentData() {
-
+        date.setValue(tripSegment.getDate());
+        time.setValue(tripSegment.getDate());
+        company.setSelectedItem(tripSegment.getCompany());
+        trainNumber.setText(tripSegment.getTrainNumber());
+        departureCity.setText(tripSegment.getDepartureCity());
+        arrivalCity.setText(tripSegment.getArrivalCity());
+        arrivalTime.setText(tripSegment.getArrivalTime());
+        price.setValue(tripSegment.getPrice());
+        confirmationNumber.setText(tripSegment.getConfirmationNumber());
     }
 
     @Override
@@ -103,6 +144,18 @@ public class TrainFormPanel extends FormPanel<TrainSegment> {
         if (tripSegment == null) {
             tripSegment = new TrainSegment();
         }
+        tripSegment.setDate(FormUtility.parseDateFromDateAndTime(date, time));
+        tripSegment.setCompany(company.getSelectedItem().toString());
+        tripSegment.setTrainNumber(trainNumber.getText());
+        tripSegment.setDepartureCity(departureCity.getText());
+        tripSegment.setArrivalCity(arrivalCity.getText());
+        tripSegment.setArrivalTime(arrivalTime.getText());
+        try {
+            tripSegment.setPrice(Float.parseFloat(price.getText()));
+        } catch (NumberFormatException e) {
+            tripSegment.setPrice(0);
+        }
+        tripSegment.setConfirmationNumber(confirmationNumber.getText());
         return tripSegment;
     }
 }

@@ -13,16 +13,21 @@ public class TripTracker {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                //Create an instance of our application and start it.
                 new TripTracker().createAndShowGUI();
             }
         });
     }
 
+    /**
+     * This creates the basic frame of teh application and attaches the main screen to it
+     */
     private void createAndShowGUI() {
         final JFrame frame = new JFrame("Trip Tracker");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(800, 600));
 
+        //Attach the main screen
         frame.add(new DataEntryScreen());
 
         //Display the window.
